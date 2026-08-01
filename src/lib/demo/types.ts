@@ -39,8 +39,8 @@ export interface Stage {
   description: string;
   status: StageStatus;
   owner: string;
-  startedAt?: string;
-  completedAt?: string;
+  startedAt?: string | undefined;
+  completedAt?: string | undefined;
   checks: StageCheck[];
 }
 
@@ -49,9 +49,9 @@ export type SegmentKind = "ui-string" | "marketing";
 export interface Translation {
   value: string;
   state: "clean" | "flagged" | "resolved" | "pending";
-  charCount?: number;
-  charLimit?: number;
-  note?: string;
+  charCount?: number | undefined;
+  charLimit?: number | undefined;
+  note?: string | undefined;
 }
 
 export interface Segment {
@@ -59,7 +59,7 @@ export interface Segment {
   key: string;
   kind: SegmentKind;
   context: string;
-  charLimit?: number;
+  charLimit?: number | undefined;
   source: string;
   english: string;
   targets: Record<Exclude<LangCode, "zh" | "en">, Translation>;
@@ -85,7 +85,7 @@ export interface ExceptionItem {
   id: string;
   kind: ExceptionKind;
   language: LangCode;
-  segmentId?: string;
+  segmentId?: string | undefined;
   title: string;
   summary: string;
   severity: "blocked" | "warn";
@@ -96,7 +96,7 @@ export interface ExceptionItem {
   resolutionLabel: string;
   rejectLabel: string;
   state: ExceptionState;
-  resolutionNote?: string;
+  resolutionNote?: string | undefined;
 }
 
 export interface RequestItem {
@@ -194,6 +194,6 @@ export interface ActivityEvent {
   actor: string;
   actorType: "system" | "human";
   message: string;
-  reason?: string;
-  reversible?: boolean;
+  reason?: string | undefined;
+  reversible?: boolean | undefined;
 }
