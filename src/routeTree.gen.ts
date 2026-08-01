@@ -21,6 +21,7 @@ import { Route as AppEditorRouteImport } from './routes/app.editor'
 import { Route as AppKnowledgeRouteImport } from './routes/app.knowledge'
 import { Route as AppOperationsRouteImport } from './routes/app.operations'
 import { Route as AppRequestsRouteImport } from './routes/app.requests'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppWorkflowRouteImport } from './routes/app.workflow'
 
 const IndexRoute = IndexRouteImport.update({
@@ -83,6 +84,11 @@ const AppRequestsRoute = AppRequestsRouteImport.update({
   path: '/requests',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppWorkflowRoute = AppWorkflowRouteImport.update({
   id: '/workflow',
   path: '/workflow',
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/app/knowledge': typeof AppKnowledgeRoute
   '/app/operations': typeof AppOperationsRoute
   '/app/requests': typeof AppRequestsRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/workflow': typeof AppWorkflowRoute
   '/app/': typeof AppIndexRoute
 }
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/app/knowledge': typeof AppKnowledgeRoute
   '/app/operations': typeof AppOperationsRoute
   '/app/requests': typeof AppRequestsRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/workflow': typeof AppWorkflowRoute
   '/app': typeof AppIndexRoute
 }
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/app/knowledge': typeof AppKnowledgeRoute
   '/app/operations': typeof AppOperationsRoute
   '/app/requests': typeof AppRequestsRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/workflow': typeof AppWorkflowRoute
   '/app/': typeof AppIndexRoute
 }
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/app/knowledge'
     | '/app/operations'
     | '/app/requests'
+    | '/app/settings'
     | '/app/workflow'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/app/knowledge'
     | '/app/operations'
     | '/app/requests'
+    | '/app/settings'
     | '/app/workflow'
     | '/app'
   id:
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/app/knowledge'
     | '/app/operations'
     | '/app/requests'
+    | '/app/settings'
     | '/app/workflow'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -275,6 +287,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRequestsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/workflow': {
       id: '/app/workflow'
       path: '/workflow'
@@ -292,6 +311,7 @@ interface AppRouteChildren {
   AppKnowledgeRoute: typeof AppKnowledgeRoute
   AppOperationsRoute: typeof AppOperationsRoute
   AppRequestsRoute: typeof AppRequestsRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppWorkflowRoute: typeof AppWorkflowRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -303,6 +323,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppKnowledgeRoute: AppKnowledgeRoute,
   AppOperationsRoute: AppOperationsRoute,
   AppRequestsRoute: AppRequestsRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppWorkflowRoute: AppWorkflowRoute,
   AppIndexRoute: AppIndexRoute,
 }
