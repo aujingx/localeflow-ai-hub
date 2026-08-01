@@ -15,6 +15,7 @@ import { Route as DecisionsRouteImport } from './routes/decisions'
 import { Route as ProductRouteImport } from './routes/product'
 import { Route as RolesRouteImport } from './routes/roles'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppEditorRouteImport } from './routes/app.editor'
 import { Route as AppRequestsRouteImport } from './routes/app.requests'
 import { Route as AppWorkflowRouteImport } from './routes/app.workflow'
 
@@ -48,6 +49,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEditorRoute = AppEditorRouteImport.update({
+  id: '/editor',
+  path: '/editor',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppRequestsRoute = AppRequestsRouteImport.update({
   id: '/requests',
   path: '/requests',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
+  '/app/editor': typeof AppEditorRoute
   '/app/requests': typeof AppRequestsRoute
   '/app/workflow': typeof AppWorkflowRoute
   '/app/': typeof AppIndexRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
+  '/app/editor': typeof AppEditorRoute
   '/app/requests': typeof AppRequestsRoute
   '/app/workflow': typeof AppWorkflowRoute
   '/app': typeof AppIndexRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
+  '/app/editor': typeof AppEditorRoute
   '/app/requests': typeof AppRequestsRoute
   '/app/workflow': typeof AppWorkflowRoute
   '/app/': typeof AppIndexRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/decisions'
     | '/product'
     | '/roles'
+    | '/app/editor'
     | '/app/requests'
     | '/app/workflow'
     | '/app/'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/decisions'
     | '/product'
     | '/roles'
+    | '/app/editor'
     | '/app/requests'
     | '/app/workflow'
     | '/app'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/decisions'
     | '/product'
     | '/roles'
+    | '/app/editor'
     | '/app/requests'
     | '/app/workflow'
     | '/app/'
@@ -173,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/editor': {
+      id: '/app/editor'
+      path: '/editor'
+      fullPath: '/app/editor'
+      preLoaderRoute: typeof AppEditorRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/requests': {
       id: '/app/requests'
       path: '/requests'
@@ -191,12 +210,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppEditorRoute: typeof AppEditorRoute
   AppRequestsRoute: typeof AppRequestsRoute
   AppWorkflowRoute: typeof AppWorkflowRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppEditorRoute: AppEditorRoute,
   AppRequestsRoute: AppRequestsRoute,
   AppWorkflowRoute: AppWorkflowRoute,
   AppIndexRoute: AppIndexRoute,
