@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as DecisionsRouteImport } from './routes/decisions'
 import { Route as ProductRouteImport } from './routes/product'
 import { Route as RolesRouteImport } from './routes/roles'
@@ -17,6 +18,11 @@ import { Route as RolesRouteImport } from './routes/roles'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DecisionsRoute = DecisionsRouteImport.update({
@@ -37,12 +43,14 @@ const RolesRoute = RolesRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/decisions' | '/product' | '/roles'
+  fullPaths: '/' | '/app' | '/decisions' | '/product' | '/roles'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/decisions' | '/product' | '/roles'
-  id: '__root__' | '/' | '/decisions' | '/product' | '/roles'
+  to: '/' | '/app' | '/decisions' | '/product' | '/roles'
+  id: '__root__' | '/' | '/app' | '/decisions' | '/product' | '/roles'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRoute
   DecisionsRoute: typeof DecisionsRoute
   ProductRoute: typeof ProductRoute
   RolesRoute: typeof RolesRoute
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/decisions': {
@@ -104,6 +121,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRoute,
   DecisionsRoute: DecisionsRoute,
   ProductRoute: ProductRoute,
   RolesRoute: RolesRoute,
