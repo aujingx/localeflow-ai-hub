@@ -17,6 +17,7 @@ import { Route as RolesRouteImport } from './routes/roles'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAssetsRouteImport } from './routes/app.assets'
 import { Route as AppEditorRouteImport } from './routes/app.editor'
+import { Route as AppOperationsRouteImport } from './routes/app.operations'
 import { Route as AppRequestsRouteImport } from './routes/app.requests'
 import { Route as AppWorkflowRouteImport } from './routes/app.workflow'
 
@@ -60,6 +61,11 @@ const AppEditorRoute = AppEditorRouteImport.update({
   path: '/editor',
   getParentRoute: () => AppRoute,
 } as any)
+const AppOperationsRoute = AppOperationsRouteImport.update({
+  id: '/operations',
+  path: '/operations',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppRequestsRoute = AppRequestsRouteImport.update({
   id: '/requests',
   path: '/requests',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/roles': typeof RolesRoute
   '/app/assets': typeof AppAssetsRoute
   '/app/editor': typeof AppEditorRoute
+  '/app/operations': typeof AppOperationsRoute
   '/app/requests': typeof AppRequestsRoute
   '/app/workflow': typeof AppWorkflowRoute
   '/app/': typeof AppIndexRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/roles': typeof RolesRoute
   '/app/assets': typeof AppAssetsRoute
   '/app/editor': typeof AppEditorRoute
+  '/app/operations': typeof AppOperationsRoute
   '/app/requests': typeof AppRequestsRoute
   '/app/workflow': typeof AppWorkflowRoute
   '/app': typeof AppIndexRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/roles': typeof RolesRoute
   '/app/assets': typeof AppAssetsRoute
   '/app/editor': typeof AppEditorRoute
+  '/app/operations': typeof AppOperationsRoute
   '/app/requests': typeof AppRequestsRoute
   '/app/workflow': typeof AppWorkflowRoute
   '/app/': typeof AppIndexRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/roles'
     | '/app/assets'
     | '/app/editor'
+    | '/app/operations'
     | '/app/requests'
     | '/app/workflow'
     | '/app/'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/roles'
     | '/app/assets'
     | '/app/editor'
+    | '/app/operations'
     | '/app/requests'
     | '/app/workflow'
     | '/app'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/roles'
     | '/app/assets'
     | '/app/editor'
+    | '/app/operations'
     | '/app/requests'
     | '/app/workflow'
     | '/app/'
@@ -211,6 +223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEditorRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/operations': {
+      id: '/app/operations'
+      path: '/operations'
+      fullPath: '/app/operations'
+      preLoaderRoute: typeof AppOperationsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/requests': {
       id: '/app/requests'
       path: '/requests'
@@ -231,6 +250,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppAssetsRoute: typeof AppAssetsRoute
   AppEditorRoute: typeof AppEditorRoute
+  AppOperationsRoute: typeof AppOperationsRoute
   AppRequestsRoute: typeof AppRequestsRoute
   AppWorkflowRoute: typeof AppWorkflowRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -239,6 +259,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAssetsRoute: AppAssetsRoute,
   AppEditorRoute: AppEditorRoute,
+  AppOperationsRoute: AppOperationsRoute,
   AppRequestsRoute: AppRequestsRoute,
   AppWorkflowRoute: AppWorkflowRoute,
   AppIndexRoute: AppIndexRoute,
