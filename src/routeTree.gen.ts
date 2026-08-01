@@ -15,6 +15,7 @@ import { Route as DecisionsRouteImport } from './routes/decisions'
 import { Route as ProductRouteImport } from './routes/product'
 import { Route as RolesRouteImport } from './routes/roles'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppAssetsRouteImport } from './routes/app.assets'
 import { Route as AppEditorRouteImport } from './routes/app.editor'
 import { Route as AppKnowledgeRouteImport } from './routes/app.knowledge'
@@ -50,6 +51,11 @@ const RolesRoute = RolesRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAssetsRoute = AppAssetsRouteImport.update({
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/assets': typeof AppAssetsRoute
   '/app/editor': typeof AppEditorRoute
   '/app/knowledge': typeof AppKnowledgeRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/assets': typeof AppAssetsRoute
   '/app/editor': typeof AppEditorRoute
   '/app/knowledge': typeof AppKnowledgeRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/assets': typeof AppAssetsRoute
   '/app/editor': typeof AppEditorRoute
   '/app/knowledge': typeof AppKnowledgeRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/decisions'
     | '/product'
     | '/roles'
+    | '/app/analytics'
     | '/app/assets'
     | '/app/editor'
     | '/app/knowledge'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/decisions'
     | '/product'
     | '/roles'
+    | '/app/analytics'
     | '/app/assets'
     | '/app/editor'
     | '/app/knowledge'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/decisions'
     | '/product'
     | '/roles'
+    | '/app/analytics'
     | '/app/assets'
     | '/app/editor'
     | '/app/knowledge'
@@ -221,6 +233,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/analytics': {
+      id: '/app/analytics'
+      path: '/analytics'
+      fullPath: '/app/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/assets': {
       id: '/app/assets'
       path: '/assets'
@@ -267,6 +286,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppAssetsRoute: typeof AppAssetsRoute
   AppEditorRoute: typeof AppEditorRoute
   AppKnowledgeRoute: typeof AppKnowledgeRoute
@@ -277,6 +297,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAnalyticsRoute: AppAnalyticsRoute,
   AppAssetsRoute: AppAssetsRoute,
   AppEditorRoute: AppEditorRoute,
   AppKnowledgeRoute: AppKnowledgeRoute,
