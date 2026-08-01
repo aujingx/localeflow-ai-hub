@@ -14,7 +14,10 @@ export const Route = createFileRoute("/")({
         content:
           "A product prototype for an internal localization platform: Chinese source to English master to JA, DE and FR, with checks at every stage, routed human exceptions, and automated project coordination.",
       },
-      { property: "og:title", content: "LocaleFlow AI — Enterprise localization workflow prototype" },
+      {
+        property: "og:title",
+        content: "LocaleFlow AI — Enterprise localization workflow prototype",
+      },
       {
         property: "og:description",
         content:
@@ -66,16 +69,22 @@ export default function Home() {
   return (
     <SiteLayout>
       <section className="relative overflow-hidden border-b border-border">
-        <div className="grid-lines pointer-events-none absolute inset-0 opacity-[0.35]" aria-hidden />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-primary/40" aria-hidden />
+        <div
+          className="grid-lines pointer-events-none absolute inset-0 opacity-[0.35]"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-primary/40"
+          aria-hidden
+        />
         <div className="relative mx-auto max-w-6xl px-5 py-16 sm:py-24">
           <PrototypeBadge />
           <h1 className="mt-5 max-w-3xl text-3xl leading-[1.1] font-semibold text-balance sm:text-5xl">
             From approved Chinese copy to every market—without chasing tasks.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            LocaleFlow AI generates multilingual content, checks quality at every step, routes exceptions to the right
-            employee, and keeps delivery moving from request to release.
+            LocaleFlow AI generates multilingual content, checks quality at every step, routes
+            exceptions to the right employee, and keeps delivery moving from request to release.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
@@ -100,7 +109,9 @@ export default function Home() {
               ["Human touchpoints", "Failed checks only"],
             ].map(([k, v]) => (
               <div key={k} className="rounded-xl border border-border bg-surface p-4">
-                <dt className="font-mono text-[11px] tracking-wide text-muted-foreground uppercase">{k}</dt>
+                <dt className="font-mono text-[11px] tracking-wide text-muted-foreground uppercase">
+                  {k}
+                </dt>
                 <dd className="mt-1.5 text-sm font-medium">{v}</dd>
               </div>
             ))}
@@ -159,17 +170,37 @@ export default function Home() {
       <div className="border-y border-border bg-surface-2">
         <Section
           eyebrow="In the demo"
-          title="One feature launch, five real exceptions"
+          title="One feature launch, five modeled exceptions"
           lead="The demo is seeded with a single launch: Chinese UI strings plus a campaign message, an approved English master, and Japanese, German and French output."
           className="!py-14 sm:!py-16"
         >
           <ul className="grid gap-3 md:grid-cols-2">
             {[
-              ["Source QA finds an ambiguous Chinese sentence", "The requester is asked to clarify it before generation continues.", "block"],
-              ["Japanese fails a formality rule", "Plain form used where the style guide requires です・ます.", "block"],
-              ["German exceeds a UI character limit", "34 characters against a 20-character button.", "block"],
-              ["A Language Owner is over capacity", "An unstarted task is reassigned, with the rule and an undo.", "warn"],
-              ["Repeated edits create a terminology candidate", "Held as a campaign-specific exception — the global glossary is untouched.", "warn"],
+              [
+                "Source QA finds an ambiguous Chinese sentence",
+                "The requester is asked to clarify it before generation continues.",
+                "block",
+              ],
+              [
+                "Japanese fails a formality rule",
+                "Plain form used where the style guide requires です・ます.",
+                "block",
+              ],
+              [
+                "German exceeds a UI character limit",
+                "34 characters against a 20-character button.",
+                "block",
+              ],
+              [
+                "A Language Owner is over capacity",
+                "An unstarted task is reassigned, with the rule and an undo.",
+                "warn",
+              ],
+              [
+                "Repeated edits create a terminology candidate",
+                "Held as a campaign-specific exception — the global glossary is untouched.",
+                "warn",
+              ],
             ].map(([title, body, tone]) => (
               <li key={title as string} className="rounded-xl border border-border bg-surface p-4">
                 <div className="flex items-start gap-2.5">

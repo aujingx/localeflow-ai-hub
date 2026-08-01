@@ -6,15 +6,26 @@ export const Route = createFileRoute("/app/analytics")({
 });
 
 const metrics = [
-  { label: "Segments auto-passed", value: 68, note: "of 8 segments in this launch, prototype data" },
-  { label: "Checks failing on first pass", value: 21, note: "mostly length and formality rules" },
-  { label: "Exceptions closed by owners", value: 50, note: "remaining items are open in the demo" },
+  { label: "Segments auto-passed", value: 68, note: "Illustrative share across the seeded launch" },
+  {
+    label: "Checks failing on first pass",
+    value: 21,
+    note: "Illustrative; primarily length and formality flags",
+  },
+  {
+    label: "Exceptions closed by owners",
+    value: 50,
+    note: "Illustrative; remaining demo exceptions stay open",
+  },
 ];
 
 function AnalyticsPage() {
   return (
     <div className="mx-auto max-w-5xl">
-      <PageHeader title="Analytics" lead="Prototype figures only — derived from seeded demo data, not measured production results." />
+      <PageHeader
+        title="Analytics"
+        lead="Prototype figures only — derived from seeded demo data, not measured production results."
+      />
       <Panel title="Quality and flow" description="Every number below is illustrative.">
         <ul className="space-y-4">
           {metrics.map((m) => (
