@@ -15,6 +15,7 @@ import { Route as DecisionsRouteImport } from './routes/decisions'
 import { Route as ProductRouteImport } from './routes/product'
 import { Route as RolesRouteImport } from './routes/roles'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppRequestsRouteImport } from './routes/app.requests'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRequestsRoute = AppRequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
+  '/app/requests': typeof AppRequestsRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
+  '/app/requests': typeof AppRequestsRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -69,14 +77,30 @@ export interface FileRoutesById {
   '/decisions': typeof DecisionsRoute
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
+  '/app/requests': typeof AppRequestsRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/decisions' | '/product' | '/roles' | '/app/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/decisions'
+    | '/product'
+    | '/roles'
+    | '/app/requests'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/decisions' | '/product' | '/roles' | '/app'
-  id: '__root__' | '/' | '/app' | '/decisions' | '/product' | '/roles' | '/app/'
+  to: '/' | '/decisions' | '/product' | '/roles' | '/app/requests' | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/decisions'
+    | '/product'
+    | '/roles'
+    | '/app/requests'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -131,14 +155,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/requests': {
+      id: '/app/requests'
+      path: '/requests'
+      fullPath: '/app/requests'
+      preLoaderRoute: typeof AppRequestsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppRequestsRoute: typeof AppRequestsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppRequestsRoute: AppRequestsRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
