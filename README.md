@@ -45,23 +45,31 @@ There are no external vendor roles in this product model. All work stays inside 
 
 ## What the demo proves
 
-The seeded feature launch supports these stateful paths:
+The primary `Guided task` completes one seeded request from source intake to release:
 
-- open a localization request and inspect its workflow;
-- review source, Japanese formality, and German length exceptions;
+- resolve an ambiguous Chinese sentence before generation;
+- approve and lock the English master;
+- generate Japanese, German, and French in parallel;
+- resolve Japanese formality and German character-limit exceptions;
 - observe a capacity-based reassignment of an unstarted task;
-- approve, reject, or scope a terminology candidate;
+- pass the release gate and create a simulated multilingual package;
+- approve, reject, trial, or scope a terminology candidate;
+- inspect the final execution summary and audit evidence.
+
+The broader workspace also supports these stateful paths:
+
+- open requests and inspect stage-level checks;
 - change the optional approval policy and see the workflow update;
 - inspect language assets, operational load, audit history, and illustrative analytics.
 
 ## Evidence boundary
 
-| Status                       | Included                                                                                                                                      |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Implemented in the prototype | Clickable workflow, local state changes, exception handling, operations, language assets, knowledge decisions, settings, and seeded analytics |
-| Product design defined       | Risk routing, scope-aware learning, reversible automation, workload model, and governance rules                                               |
-| Future work                  | Production connectors, persistent backend, SSO/RBAC, multi-tenant isolation, model evaluation, and release integrations                       |
-| Measured outcomes            | None claimed; all figures in the demo are illustrative and derived from seeded data                                                           |
+| Status                       | Included                                                                                                                                                 |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Implemented in the prototype | Guided source-to-release task, local state changes, exception handling, operations, language assets, knowledge decisions, settings, and seeded analytics |
+| Product design defined       | Risk routing, scope-aware learning, reversible automation, workload model, and governance rules                                                          |
+| Future work                  | Production connectors, persistent backend, SSO/RBAC, multi-tenant isolation, model evaluation, and release integrations                                  |
+| Measured outcomes            | None claimed; all figures in the demo are illustrative and derived from seeded data                                                                      |
 
 ## Success metrics for validation
 

@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useReducer,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useMemo, useReducer, type ReactNode } from "react";
 import {
   exceptions as seedExceptions,
   initialActivity,
@@ -39,6 +32,12 @@ export interface DemoState {
   secondApprover: boolean;
   autoPassLowRisk: boolean;
   trialPrompt: boolean;
+  guidedStep: number;
+  guidedJaResolved: boolean;
+  guidedDeResolved: boolean;
+  guidedReassigned: boolean;
+  guidedReleased: boolean;
+  guidedKnowledgeDecision: TermCandidate["state"];
 }
 
 type Action =
@@ -48,6 +47,12 @@ type Action =
   | { type: "candidate"; id: string; decision: TermCandidate["state"] }
   | { type: "toggle"; key: "secondApprover" | "autoPassLowRisk" | "trialPrompt" }
   | { type: "toggle-rule"; id: string }
+  | { type: "guided-step"; step: number }
+  | { type: "guided-resolve"; language: "ja" | "de" }
+  | { type: "guided-reassign" }
+  | { type: "guided-release" }
+  | { type: "guided-knowledge"; decision: TermCandidate["state"] }
+  | { type: "guided-reset" }
   | { type: "reset" };
 
 function initial(): DemoState {
@@ -63,6 +68,12 @@ function initial(): DemoState {
     secondApprover: false,
     autoPassLowRisk: true,
     trialPrompt: false,
+    guidedStep: 0,
+    guidedJaResolved: false,
+    guidedDeResolved: false,
+    guidedReassigned: false,
+    guidedReleased: false,
+    guidedKnowledgeDecision: "pending",
   };
 }
 
@@ -87,9 +98,20 @@ function applySegmentFix(state: DemoState, exc: ExceptionItem): Segment[] {
         ...seg,
         english: "The system finalises the ledger record automatically once the sync completes.",
         targets: {
-          ja: { value: "同期が完了すると、システムが自動的に台帳記録を確定します。", state: "resolved" as const },
-          de: { value: "Nach Abschluss der Synchronisierung schließt das System den Buchungssatz automatisch ab.", state: "resolved" as const },
-          fr: { value: "Une fois la synchronisation terminée, le système clôture automatiquement l’écriture.", state: "resolved" as const },
+          ja: {
+            value: "同期が完了すると、システムが自動的に台帳記録を確定します。",
+            state: "resolved" as const,
+          },
+          de: {
+            value:
+              "Nach Abschluss der Synchronisierung schließt das System den Buchungssatz automatisch ab.",
+            state: "resolved" as const,
+          },
+          fr: {
+            value:
+              "Une fois la synchronisation terminée, le système clôture automatiquement l’écriture.",
+            state: "resolved" as const,
+          },
         },
       };
     }
@@ -125,7 +147,11 @@ function recomputeStages(state: DemoState): Stage[] {
         completedAt: sourceOpen ? undefined : "Just now",
         checks: stage.checks.map((c) =>
           c.category === "source-clarity"
-            ? { ...c, state: sourceOpen ? "fail" : "pass", detail: sourceOpen ? c.detail : "Clarified by the requester; generation resumed." }
+            ? {
+                ...c,
+                state: sourceOpen ? "fail" : "pass",
+                detail: sourceOpen ? c.detail : "Clarified by the requester; generation resumed.",
+              }
             : c,
         ),
       };
@@ -141,7 +167,11 @@ function recomputeStages(state: DemoState): Stage[] {
             const stillOpen = open.some(
               (e) => (isJa && e.kind === "locale-rules") || (isDe && e.kind === "character-limit"),
             );
-            return { ...c, state: stillOpen ? "fail" : "pass", detail: stillOpen ? c.detail : "Resolved by the Language Owner." };
+            return {
+              ...c,
+              state: stillOpen ? "fail" : "pass",
+              detail: stillOpen ? c.detail : "Resolved by the Language Owner.",
+            };
           }
           return c;
         }),
@@ -160,7 +190,11 @@ function recomputeStages(state: DemoState): Stage[] {
           const kind = map[c.id];
           if (!kind) return c;
           const stillOpen = open.some((e) => e.kind === kind);
-          return { ...c, state: stillOpen ? "pending" : "pass", detail: stillOpen ? c.detail : "Closed." };
+          return {
+            ...c,
+            state: stillOpen ? "pending" : "pass",
+            detail: stillOpen ? c.detail : "Closed.",
+          };
         }),
       };
     }
@@ -172,7 +206,9 @@ function recomputeStages(state: DemoState): Stage[] {
         checks: stage.checks.map((c) => ({
           ...c,
           state: ready ? "pass" : "pending",
-          detail: ready ? "Ready to publish." : `${openBlocking.length} blocking exception(s) open.`,
+          detail: ready
+            ? "Ready to publish."
+            : `${openBlocking.length} blocking exception(s) open.`,
         })),
       };
     }
@@ -184,7 +220,9 @@ function recomputeStages(state: DemoState): Stage[] {
         checks: stage.checks.map((c) => ({
           ...c,
           state: pending ? "pending" : "pass",
-          detail: pending ? `${pending} candidate(s) awaiting a scope decision.` : "All candidates decided.",
+          detail: pending
+            ? `${pending} candidate(s) awaiting a scope decision.`
+            : "All candidates decided.",
         })),
       };
     }
@@ -254,7 +292,12 @@ function reducer(state: DemoState, action: Action): DemoState {
           return seeded.segmentId === seg.id && original ? original : seg;
         }),
         activity: [
-          event("You", "human", `Reverted: ${seeded.title}`, "Automated and human decisions in this prototype are reversible."),
+          event(
+            "You",
+            "human",
+            `Reverted: ${seeded.title}`,
+            "Automated and human decisions in this prototype are reversible.",
+          ),
           ...state.activity,
         ],
       };
@@ -275,7 +318,9 @@ function reducer(state: DemoState, action: Action): DemoState {
       let terms = state.terms;
       if (action.decision === "approved-global") {
         terms = state.terms.map((t) =>
-          t.source === cand.source ? { ...t, [cand.language]: cand.proposedTarget, updatedAt: "Just now" } : t,
+          t.source === cand.source
+            ? { ...t, [cand.language]: cand.proposedTarget, updatedAt: "Just now" }
+            : t,
         );
       } else if (action.decision === "campaign-scoped") {
         terms = [
@@ -284,9 +329,18 @@ function reducer(state: DemoState, action: Action): DemoState {
             id: `TC-${cand.id}`,
             source: cand.source,
             en: state.terms.find((t) => t.source === cand.source)?.en ?? "—",
-            ja: cand.language === "ja" ? cand.proposedTarget : state.terms.find((t) => t.source === cand.source)?.ja ?? "—",
-            de: cand.language === "de" ? cand.proposedTarget : state.terms.find((t) => t.source === cand.source)?.de ?? "—",
-            fr: cand.language === "fr" ? cand.proposedTarget : state.terms.find((t) => t.source === cand.source)?.fr ?? "—",
+            ja:
+              cand.language === "ja"
+                ? cand.proposedTarget
+                : (state.terms.find((t) => t.source === cand.source)?.ja ?? "—"),
+            de:
+              cand.language === "de"
+                ? cand.proposedTarget
+                : (state.terms.find((t) => t.source === cand.source)?.de ?? "—"),
+            fr:
+              cand.language === "fr"
+                ? cand.proposedTarget
+                : (state.terms.find((t) => t.source === cand.source)?.fr ?? "—"),
             scope: "campaign" as const,
             status: "campaign-exception" as const,
             updatedAt: "Just now",
@@ -296,7 +350,9 @@ function reducer(state: DemoState, action: Action): DemoState {
       const next: DemoState = {
         ...state,
         terms,
-        candidates: state.candidates.map((c) => (c.id === action.id ? { ...c, state: action.decision } : c)),
+        candidates: state.candidates.map((c) =>
+          c.id === action.id ? { ...c, state: action.decision } : c,
+        ),
         exceptions:
           cand.id === "TC-01"
             ? state.exceptions.map((e) =>
@@ -329,7 +385,12 @@ function reducer(state: DemoState, action: Action): DemoState {
         ...state,
         [action.key]: value,
         activity: [
-          event("You", "human", `${labels[action.key]} ${value ? "enabled" : "disabled"}`, "Workflow rule change. Applies to new stage transitions."),
+          event(
+            "You",
+            "human",
+            `${labels[action.key]} ${value ? "enabled" : "disabled"}`,
+            "Workflow rule change. Applies to new stage transitions.",
+          ),
           ...state.activity,
         ],
       };
@@ -340,6 +401,38 @@ function reducer(state: DemoState, action: Action): DemoState {
         ...state,
         rules: state.rules.map((r) => (r.id === action.id ? { ...r, enabled: !r.enabled } : r)),
       };
+
+    case "guided-step":
+      return { ...state, guidedStep: Math.max(0, Math.min(8, action.step)) };
+
+    case "guided-resolve":
+      return {
+        ...state,
+        guidedJaResolved: action.language === "ja" ? true : state.guidedJaResolved,
+        guidedDeResolved: action.language === "de" ? true : state.guidedDeResolved,
+      };
+
+    case "guided-reassign":
+      return { ...state, guidedReassigned: true };
+
+    case "guided-release":
+      return { ...state, guidedReleased: true };
+
+    case "guided-knowledge":
+      return { ...state, guidedKnowledgeDecision: action.decision };
+
+    case "guided-reset": {
+      const seeded = initial();
+      return {
+        ...state,
+        guidedStep: seeded.guidedStep,
+        guidedJaResolved: seeded.guidedJaResolved,
+        guidedDeResolved: seeded.guidedDeResolved,
+        guidedReassigned: seeded.guidedReassigned,
+        guidedReleased: seeded.guidedReleased,
+        guidedKnowledgeDecision: seeded.guidedKnowledgeDecision,
+      };
+    }
 
     default:
       return state;
@@ -353,6 +446,12 @@ interface DemoContextValue extends DemoState {
   decideCandidate: (id: string, decision: TermCandidate["state"]) => void;
   toggleSetting: (key: "secondApprover" | "autoPassLowRisk" | "trialPrompt") => void;
   toggleRule: (id: string) => void;
+  setGuidedStep: (step: number) => void;
+  resolveGuidedLanguage: (language: "ja" | "de") => void;
+  reassignGuidedTask: () => void;
+  releaseGuidedPackage: () => void;
+  decideGuidedKnowledge: (decision: TermCandidate["state"]) => void;
+  resetGuided: () => void;
   reset: () => void;
   openExceptions: ExceptionItem[];
   blockingCount: number;
@@ -364,18 +463,40 @@ const DemoContext = createContext<DemoContextValue | null>(null);
 export function DemoProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, undefined, initial);
 
-  const resolveException = useCallback((id: string) => dispatch({ type: "resolve-exception", id }), []);
-  const rejectException = useCallback((id: string) => dispatch({ type: "reject-exception", id }), []);
-  const revertException = useCallback((id: string) => dispatch({ type: "revert-exception", id }), []);
+  const resolveException = useCallback(
+    (id: string) => dispatch({ type: "resolve-exception", id }),
+    [],
+  );
+  const rejectException = useCallback(
+    (id: string) => dispatch({ type: "reject-exception", id }),
+    [],
+  );
+  const revertException = useCallback(
+    (id: string) => dispatch({ type: "revert-exception", id }),
+    [],
+  );
   const decideCandidate = useCallback(
     (id: string, decision: TermCandidate["state"]) => dispatch({ type: "candidate", id, decision }),
     [],
   );
   const toggleSetting = useCallback(
-    (key: "secondApprover" | "autoPassLowRisk" | "trialPrompt") => dispatch({ type: "toggle", key }),
+    (key: "secondApprover" | "autoPassLowRisk" | "trialPrompt") =>
+      dispatch({ type: "toggle", key }),
     [],
   );
   const toggleRule = useCallback((id: string) => dispatch({ type: "toggle-rule", id }), []);
+  const setGuidedStep = useCallback((step: number) => dispatch({ type: "guided-step", step }), []);
+  const resolveGuidedLanguage = useCallback(
+    (language: "ja" | "de") => dispatch({ type: "guided-resolve", language }),
+    [],
+  );
+  const reassignGuidedTask = useCallback(() => dispatch({ type: "guided-reassign" }), []);
+  const releaseGuidedPackage = useCallback(() => dispatch({ type: "guided-release" }), []);
+  const decideGuidedKnowledge = useCallback(
+    (decision: TermCandidate["state"]) => dispatch({ type: "guided-knowledge", decision }),
+    [],
+  );
+  const resetGuided = useCallback(() => dispatch({ type: "guided-reset" }), []);
   const reset = useCallback(() => dispatch({ type: "reset" }), []);
 
   const value = useMemo<DemoContextValue>(() => {
@@ -391,12 +512,33 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       decideCandidate,
       toggleSetting,
       toggleRule,
+      setGuidedStep,
+      resolveGuidedLanguage,
+      reassignGuidedTask,
+      releaseGuidedPackage,
+      decideGuidedKnowledge,
+      resetGuided,
       reset,
       openExceptions,
       blockingCount,
       progress,
     };
-  }, [state, resolveException, rejectException, revertException, decideCandidate, toggleSetting, toggleRule, reset]);
+  }, [
+    state,
+    resolveException,
+    rejectException,
+    revertException,
+    decideCandidate,
+    toggleSetting,
+    toggleRule,
+    setGuidedStep,
+    resolveGuidedLanguage,
+    reassignGuidedTask,
+    releaseGuidedPackage,
+    decideGuidedKnowledge,
+    resetGuided,
+    reset,
+  ]);
 
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;
 }

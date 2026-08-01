@@ -18,6 +18,7 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppAssetsRouteImport } from './routes/app.assets'
 import { Route as AppEditorRouteImport } from './routes/app.editor'
+import { Route as AppGuidedRouteImport } from './routes/app.guided'
 import { Route as AppKnowledgeRouteImport } from './routes/app.knowledge'
 import { Route as AppOperationsRouteImport } from './routes/app.operations'
 import { Route as AppRequestsRouteImport } from './routes/app.requests'
@@ -69,6 +70,11 @@ const AppEditorRoute = AppEditorRouteImport.update({
   path: '/editor',
   getParentRoute: () => AppRoute,
 } as any)
+const AppGuidedRoute = AppGuidedRouteImport.update({
+  id: '/guided',
+  path: '/guided',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppKnowledgeRoute = AppKnowledgeRouteImport.update({
   id: '/knowledge',
   path: '/knowledge',
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/assets': typeof AppAssetsRoute
   '/app/editor': typeof AppEditorRoute
+  '/app/guided': typeof AppGuidedRoute
   '/app/knowledge': typeof AppKnowledgeRoute
   '/app/operations': typeof AppOperationsRoute
   '/app/requests': typeof AppRequestsRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/assets': typeof AppAssetsRoute
   '/app/editor': typeof AppEditorRoute
+  '/app/guided': typeof AppGuidedRoute
   '/app/knowledge': typeof AppKnowledgeRoute
   '/app/operations': typeof AppOperationsRoute
   '/app/requests': typeof AppRequestsRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/assets': typeof AppAssetsRoute
   '/app/editor': typeof AppEditorRoute
+  '/app/guided': typeof AppGuidedRoute
   '/app/knowledge': typeof AppKnowledgeRoute
   '/app/operations': typeof AppOperationsRoute
   '/app/requests': typeof AppRequestsRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/assets'
     | '/app/editor'
+    | '/app/guided'
     | '/app/knowledge'
     | '/app/operations'
     | '/app/requests'
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/assets'
     | '/app/editor'
+    | '/app/guided'
     | '/app/knowledge'
     | '/app/operations'
     | '/app/requests'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/assets'
     | '/app/editor'
+    | '/app/guided'
     | '/app/knowledge'
     | '/app/operations'
     | '/app/requests'
@@ -266,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEditorRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/guided': {
+      id: '/app/guided'
+      path: '/guided'
+      fullPath: '/app/guided'
+      preLoaderRoute: typeof AppGuidedRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/knowledge': {
       id: '/app/knowledge'
       path: '/knowledge'
@@ -308,6 +327,7 @@ interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppAssetsRoute: typeof AppAssetsRoute
   AppEditorRoute: typeof AppEditorRoute
+  AppGuidedRoute: typeof AppGuidedRoute
   AppKnowledgeRoute: typeof AppKnowledgeRoute
   AppOperationsRoute: typeof AppOperationsRoute
   AppRequestsRoute: typeof AppRequestsRoute
@@ -320,6 +340,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAnalyticsRoute: AppAnalyticsRoute,
   AppAssetsRoute: AppAssetsRoute,
   AppEditorRoute: AppEditorRoute,
+  AppGuidedRoute: AppGuidedRoute,
   AppKnowledgeRoute: AppKnowledgeRoute,
   AppOperationsRoute: AppOperationsRoute,
   AppRequestsRoute: AppRequestsRoute,
@@ -340,3 +361,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

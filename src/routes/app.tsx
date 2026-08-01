@@ -16,6 +16,7 @@ import {
   Menu,
   RotateCcw,
   Settings,
+  Sparkles,
   SlidersHorizontal,
   Table2,
   X,
@@ -31,7 +32,10 @@ export const Route = createFileRoute("/app")({
           "Clickable prototype of the LocaleFlow AI localization workspace: requests, workflow, multilingual editor, language assets, operations, knowledge updates and analytics.",
       },
       { property: "og:title", content: "LocaleFlow AI product demo" },
-      { property: "og:description", content: "A clickable enterprise localization workspace running on mock data." },
+      {
+        property: "og:description",
+        content: "A clickable enterprise localization workspace running on mock data.",
+      },
     ],
   }),
   component: AppLayout,
@@ -42,6 +46,7 @@ const groups = [
     label: "Work",
     items: [
       { to: "/app", label: "Overview", icon: LayoutDashboard, exact: true },
+      { to: "/app/guided", label: "Guided task", icon: Sparkles },
       { to: "/app/requests", label: "Requests", icon: FileText },
       { to: "/app/workflow", label: "Workflow", icon: GitBranch },
       { to: "/app/editor", label: "Multilingual editor", icon: Table2 },
@@ -75,8 +80,9 @@ function AppLayout() {
 function Shell() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { openExceptions, blockingCount, reset, secondApprover } = useDemo();
+  const { openExceptions, blockingCount, reset, secondApprover, guidedStep } = useDemo();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const guidedActive = pathname.startsWith("/app/guided");
 
   const nav = (onNavigate?: () => void) => (
     <nav className="flex flex-1 flex-col gap-5 overflow-y-auto p-3" aria-label="Workspace">
@@ -89,8 +95,10 @@ function Shell() {
           )}
           <ul className="space-y-0.5">
             {group.items.map((item) => {
-              const active = "exact" in item && item.exact ? pathname === item.to : pathname.startsWith(item.to);
-              const badge = item.to === "/app/workflow" && openExceptions.length ? openExceptions.length : null;
+              const active =
+                "exact" in item && item.exact ? pathname === item.to : pathname.startsWith(item.to);
+              const badge =
+                item.to === "/app/workflow" && openExceptions.length ? openExceptions.length : null;
               return (
                 <li key={item.to}>
                   <Link
@@ -131,8 +139,17 @@ function Shell() {
           collapsed ? "w-16" : "w-60",
         )}
       >
-        <div className={cn("flex items-center gap-2.5 border-b border-sidebar-border p-3", collapsed && "justify-center")}>
-          <Link to="/" className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground" title="Back to the product site">
+        <div
+          className={cn(
+            "flex items-center gap-2.5 border-b border-sidebar-border p-3",
+            collapsed && "justify-center",
+          )}
+        >
+          <Link
+            to="/"
+            className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground"
+            title="Back to the product site"
+          >
             <Languages className="size-4" aria-hidden />
           </Link>
           {!collapsed && (
@@ -149,7 +166,10 @@ function Shell() {
             className="flex w-full items-center justify-center gap-2 rounded-md px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            <ChevronLeft className={cn("size-4 transition-transform", collapsed && "rotate-180")} aria-hidden />
+            <ChevronLeft
+              className={cn("size-4 transition-transform", collapsed && "rotate-180")}
+              aria-hidden
+            />
             {!collapsed && "Collapse"}
           </button>
         </div>
@@ -166,7 +186,11 @@ function Shell() {
           <div className="rise-in absolute inset-y-0 left-0 flex w-72 flex-col border-r border-sidebar-border bg-sidebar">
             <div className="flex items-center justify-between border-b border-sidebar-border p-3">
               <p className="font-display text-sm font-semibold">LocaleFlow AI</p>
-              <button onClick={() => setMobileOpen(false)} aria-label="Close navigation" className="rounded-md p-1 hover:bg-secondary">
+              <button
+                onClick={() => setMobileOpen(false)}
+                aria-label="Close navigation"
+                className="rounded-md p-1 hover:bg-secondary"
+              >
                 <X className="size-4" aria-hidden />
               </button>
             </div>
@@ -188,13 +212,19 @@ function Shell() {
             <div className="hidden md:block" />
             <div className="flex min-w-0 items-center gap-2 overflow-x-auto">
               <Chip tone="primary">REQ-2418 · Smart Ledger launch</Chip>
-              <span className="hidden text-xs text-muted-foreground sm:inline">ZH → EN · JA · DE · FR</span>
-              {blockingCount > 0 ? (
+              <span className="hidden text-xs text-muted-foreground sm:inline">
+                ZH → EN · JA · DE · FR
+              </span>
+              {guidedActive ? (
+                <Chip tone={guidedStep === 8 ? "pass" : "auto"}>
+                  {guidedStep === 8 ? "Guided task released" : `Guided task ${guidedStep + 1}/8`}
+                </Chip>
+              ) : blockingCount > 0 ? (
                 <Chip tone="block">{blockingCount} blocking</Chip>
               ) : (
                 <Chip tone="pass">No blocking exceptions</Chip>
               )}
-              {secondApprover ? <Chip tone="warn">2nd approver on</Chip> : null}
+              {!guidedActive && secondApprover ? <Chip tone="warn">2nd approver on</Chip> : null}
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <PrototypeBadge className="hidden lg:inline-flex" />

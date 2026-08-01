@@ -19,12 +19,20 @@ function OverviewPage() {
         title="Overview"
         lead="Delivery health for the active launch. Every automated action below shows the rule and evidence behind it."
         actions={
-          <Link
-            to="/app/workflow"
-            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Open workflow <ArrowRight className="size-4" aria-hidden />
-          </Link>
+          <>
+            <Link
+              to="/app/workflow"
+              className="hidden items-center gap-1.5 rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium hover:bg-secondary sm:inline-flex"
+            >
+              Open workflow
+            </Link>
+            <Link
+              to="/app/guided"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            >
+              Run guided task <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </>
         }
       />
 
@@ -36,7 +44,9 @@ function OverviewPage() {
               <h2 className="mt-0.5 font-display text-base font-semibold">{active.title}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{active.summary}</p>
             </div>
-            <Chip tone={blockingCount ? "block" : "pass"}>{blockingCount ? "Blocked" : "On track"}</Chip>
+            <Chip tone={blockingCount ? "block" : "pass"}>
+              {blockingCount ? "Blocked" : "On track"}
+            </Chip>
           </div>
           <div className="mt-4">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -56,10 +66,16 @@ function OverviewPage() {
           {[
             ["Open exceptions", String(openExceptions.length), "Awaiting a human decision"],
             ["Blocking", String(blockingCount), "Stops release until resolved"],
-            ["Stages complete", `${stages.filter((s) => s.status === "done").length}/${stages.length}`, "Across the active launch"],
+            [
+              "Stages complete",
+              `${stages.filter((s) => s.status === "done").length}/${stages.length}`,
+              "Across the active launch",
+            ],
           ].map(([k, v, d]) => (
             <div key={k} className="rounded-xl border border-border bg-surface p-4">
-              <p className="font-mono text-[11px] tracking-wide text-muted-foreground uppercase">{k}</p>
+              <p className="font-mono text-[11px] tracking-wide text-muted-foreground uppercase">
+                {k}
+              </p>
               <p className="mt-1 font-display text-2xl font-semibold tabular-nums">{v}</p>
               <p className="mt-0.5 text-xs text-muted-foreground">{d}</p>
             </div>
@@ -68,10 +84,16 @@ function OverviewPage() {
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <Panel title="Stage funnel" description="Checks run at each transition, not only before release.">
+        <Panel
+          title="Stage funnel"
+          description="Checks run at each transition, not only before release."
+        >
           <ol className="space-y-2">
             {stages.map((s) => (
-              <li key={s.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-lg border border-border bg-surface-2 px-3 py-2">
+              <li
+                key={s.id}
+                className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-lg border border-border bg-surface-2 px-3 py-2"
+              >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{s.name}</p>
                   <p className="truncate text-xs text-muted-foreground">{s.owner}</p>
@@ -99,26 +121,37 @@ function OverviewPage() {
                         {e.assignee}
                       </p>
                     </div>
-                    <Chip tone={e.severity === "blocked" ? "block" : "warn"}>{e.severity === "blocked" ? "Blocked" : "Warning"}</Chip>
+                    <Chip tone={e.severity === "blocked" ? "block" : "warn"}>
+                      {e.severity === "blocked" ? "Blocked" : "Warning"}
+                    </Chip>
                   </div>
                 </li>
               ))}
             </ul>
           )}
-          <Link to="/app/workflow" className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+          <Link
+            to="/app/workflow"
+            className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+          >
             Review exceptions <ArrowRight className="size-4" aria-hidden />
           </Link>
         </Panel>
       </div>
 
-      <Panel className="mt-4" title="Recent automated actions" description="Trigger, rule and reversibility for each system decision.">
+      <Panel
+        className="mt-4"
+        title="Recent automated actions"
+        description="Trigger, rule and reversibility for each system decision."
+      >
         <ul className="space-y-2">
           {activity.slice(0, 6).map((a) => (
             <li key={a.id} className="rise-in rounded-lg border border-border bg-surface-2 p-3">
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
                 <p className="min-w-0 text-sm">
                   <span className="inline-flex items-center gap-1.5 font-medium">
-                    {a.actorType === "system" ? <Sparkles className="size-3.5 text-auto" aria-hidden /> : null}
+                    {a.actorType === "system" ? (
+                      <Sparkles className="size-3.5 text-auto" aria-hidden />
+                    ) : null}
                     {a.actor}
                   </span>{" "}
                   — {a.message}

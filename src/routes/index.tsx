@@ -88,15 +88,21 @@ export default function Home() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              to="/app"
+              to="/app/guided"
               className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              Explore the product demo
+              Run the guided task
               <ArrowRight className="size-4" aria-hidden />
             </Link>
             <Link
-              to="/decisions"
+              to="/app"
               className="inline-flex items-center gap-2 rounded-md border border-border bg-surface px-4 py-2.5 text-sm font-medium transition-colors hover:bg-secondary"
+            >
+              Explore the workspace
+            </Link>
+            <Link
+              to="/decisions"
+              className="inline-flex items-center px-2 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground"
             >
               View product decisions
             </Link>
@@ -247,10 +253,10 @@ export default function Home() {
           </div>
         </div>
         <Link
-          to="/app"
+          to="/app/guided"
           className="mt-8 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
-          Explore the product demo
+          Run the guided task
           <ArrowRight className="size-4" aria-hidden />
         </Link>
       </Section>
