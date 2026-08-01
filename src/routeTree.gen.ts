@@ -16,6 +16,7 @@ import { Route as ProductRouteImport } from './routes/product'
 import { Route as RolesRouteImport } from './routes/roles'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppRequestsRouteImport } from './routes/app.requests'
+import { Route as AppWorkflowRouteImport } from './routes/app.workflow'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +53,11 @@ const AppRequestsRoute = AppRequestsRouteImport.update({
   path: '/requests',
   getParentRoute: () => AppRoute,
 } as any)
+const AppWorkflowRoute = AppWorkflowRouteImport.update({
+  id: '/workflow',
+  path: '/workflow',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
   '/app/requests': typeof AppRequestsRoute
+  '/app/workflow': typeof AppWorkflowRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
   '/app/requests': typeof AppRequestsRoute
+  '/app/workflow': typeof AppWorkflowRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/product': typeof ProductRoute
   '/roles': typeof RolesRoute
   '/app/requests': typeof AppRequestsRoute
+  '/app/workflow': typeof AppWorkflowRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -89,9 +98,17 @@ export interface FileRouteTypes {
     | '/product'
     | '/roles'
     | '/app/requests'
+    | '/app/workflow'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/decisions' | '/product' | '/roles' | '/app/requests' | '/app'
+  to:
+    | '/'
+    | '/decisions'
+    | '/product'
+    | '/roles'
+    | '/app/requests'
+    | '/app/workflow'
+    | '/app'
   id:
     | '__root__'
     | '/'
@@ -100,6 +117,7 @@ export interface FileRouteTypes {
     | '/product'
     | '/roles'
     | '/app/requests'
+    | '/app/workflow'
     | '/app/'
   fileRoutesById: FileRoutesById
 }
@@ -162,16 +180,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRequestsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/workflow': {
+      id: '/app/workflow'
+      path: '/workflow'
+      fullPath: '/app/workflow'
+      preLoaderRoute: typeof AppWorkflowRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
   AppRequestsRoute: typeof AppRequestsRoute
+  AppWorkflowRoute: typeof AppWorkflowRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppRequestsRoute: AppRequestsRoute,
+  AppWorkflowRoute: AppWorkflowRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
