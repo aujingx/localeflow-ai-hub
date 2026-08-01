@@ -7,7 +7,7 @@ export const Route = createFileRoute("/app/settings")({
 });
 
 function SettingsPage() {
-  const { secondApprover, toggleSecondApprover } = useDemo();
+  const { secondApprover, toggleSetting } = useDemo();
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -21,7 +21,7 @@ function SettingsPage() {
             </p>
           </div>
           <button
-            onClick={toggleSecondApprover}
+            onClick={() => toggleSetting("secondApprover")}
             aria-pressed={secondApprover}
             className={`shrink-0 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ${secondApprover ? "border-primary/30 bg-primary-soft text-primary" : "border-border bg-surface text-muted-foreground"}`}
           >
