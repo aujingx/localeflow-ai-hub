@@ -143,7 +143,7 @@ export function SegmentBoard({
   step: number;
   jaResolved: boolean;
   deResolved: boolean;
-  focusId?: string;
+  focusId?: string | undefined;
   className?: string;
 }) {
   return (
