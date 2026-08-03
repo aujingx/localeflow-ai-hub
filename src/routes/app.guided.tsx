@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AutomationNote } from "@/components/lf/automation";
 import { CheckChip, Chip, LangChip } from "@/components/lf/chips";
 import { Meter, PageHeader } from "@/components/lf/page";
+import { SegmentBoard } from "@/components/lf/segment-board";
+
 import { useDemo } from "@/lib/demo/store";
 import type { Automation, TermCandidate } from "@/lib/demo/types";
 import { cn } from "@/lib/utils";
