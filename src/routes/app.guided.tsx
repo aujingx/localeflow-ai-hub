@@ -134,7 +134,7 @@ function GuidedTaskPage() {
   } = useDemo();
 
   const complete = guidedStep === steps.length;
-  const progress = complete ? 100 : Math.round(((guidedStep + 0.5) / steps.length) * 100);
+  const progress = complete ? 100 : Math.round((guidedStep / steps.length) * 100);
   const currentAutomation =
     automationByStep[Math.min(guidedStep, automationByStep.length - 1)] ?? automationByStep[0]!;
   const activity = (complete ? activityByStep[7] : activityByStep[guidedStep]) ?? activityByStep[0];
@@ -174,7 +174,7 @@ function GuidedTaskPage() {
         </div>
 
         {/* Horizontal task path */}
-        <ol className="mt-4 grid grid-cols-2 gap-1.5 sm:grid-cols-4 xl:grid-cols-8">
+        <ol className="mt-4 grid grid-cols-2 gap-1.5 sm:grid-cols-4 lg:grid-cols-8">
           {steps.map((step, index) => {
             const done = guidedStep > index;
             const active = guidedStep === index;
@@ -230,7 +230,7 @@ function GuidedTaskPage() {
         </div>
       </section>
 
-      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="grid items-start gap-4 md:grid-cols-[minmax(0,1fr)_290px]">
         <main className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
           {complete ? (
             <CompletionStep onRestart={resetGuided} decision={guidedKnowledgeDecision} />
@@ -253,7 +253,7 @@ function GuidedTaskPage() {
           )}
         </main>
 
-        <aside className="space-y-4 lg:sticky lg:top-4">
+        <aside className="space-y-4 md:sticky md:top-4">
           <section className="rounded-xl border border-border bg-surface p-4">
             <div className="flex items-center gap-2">
               <Sparkles className="size-4 text-auto" aria-hidden />
