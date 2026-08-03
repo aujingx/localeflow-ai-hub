@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AutomationNote } from "@/components/lf/automation";
 import { CheckChip, Chip, LangChip } from "@/components/lf/chips";
 import { Meter, PageHeader } from "@/components/lf/page";
+import { SegmentBoard } from "@/components/lf/segment-board";
+
 import { useDemo } from "@/lib/demo/store";
 import type { Automation, TermCandidate } from "@/lib/demo/types";
 import { cn } from "@/lib/utils";
@@ -133,10 +135,13 @@ function GuidedTaskPage() {
 
   const complete = guidedStep === steps.length;
   const progress = complete ? 100 : Math.round((guidedStep / steps.length) * 100);
-  const currentAutomation = automationByStep[Math.min(guidedStep, automationByStep.length - 1)];
+  const currentAutomation =
+    automationByStep[Math.min(guidedStep, automationByStep.length - 1)] ?? automationByStep[0]!;
+  const activity = (complete ? activityByStep[7] : activityByStep[guidedStep]) ?? activityByStep[0];
+  const focusId = guidedStep <= 1 ? "SEG-05" : guidedStep === 4 ? "SEG-05" : undefined;
 
   return (
-    <div className="mx-auto max-w-[1440px]">
+    <div className="mx-auto max-w-[1280px]">
       <PageHeader
         title="Complete one localization task"
         lead="Follow REQ-2418 from Chinese source copy to a releasable multilingual package. The data is seeded; every decision changes the walkthrough state."
@@ -151,75 +156,82 @@ function GuidedTaskPage() {
         }
       />
 
-      <section className="mb-4 rounded-xl border border-primary/20 bg-primary-soft/45 p-4">
+      <section className="mb-4 rounded-xl border border-border bg-surface p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
+          <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <Chip tone="primary">REQ-2418</Chip>
               <Chip tone={complete ? "pass" : "auto"}>
-                {complete ? "Released" : "Guided run in progress"}
+                {complete ? "Released" : `Step ${guidedStep + 1} of ${steps.length}`}
               </Chip>
             </div>
-            <h2 className="mt-2 text-base font-semibold">Smart Ledger launch</h2>
+            <h2 className="mt-2 font-display text-base font-semibold">Smart Ledger launch</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               8 Chinese UI and campaign segments · English master · Japanese, German and French
             </p>
           </div>
           <p className="font-mono text-sm font-semibold tabular-nums">{progress}%</p>
         </div>
+
+        {/* Horizontal task path */}
+        <ol className="mt-4 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+          {steps.map((step, index) => {
+            const done = guidedStep > index;
+            const active = guidedStep === index;
+            const available = index <= guidedStep;
+            return (
+              <li key={step.id} className="min-w-0">
+                <button
+                  disabled={!available}
+                  onClick={() => setGuidedStep(index)}
+                  className={cn(
+                    "w-full overflow-hidden rounded-lg border px-2.5 py-2 text-left transition-colors",
+                    active
+                      ? "border-primary bg-primary-soft"
+                      : done
+                        ? "border-pass/30 bg-pass-soft/40 hover:border-pass/60"
+                        : "border-border bg-surface-2",
+                    !available && "cursor-not-allowed opacity-45",
+                  )}
+                >
+                  <span className="flex items-center gap-1.5">
+                    <span
+                      className={cn(
+                        "grid size-4 shrink-0 place-items-center rounded-full text-[9px] font-semibold",
+                        done
+                          ? "bg-pass text-pass-foreground"
+                          : active
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      {done ? <Check className="size-2.5" aria-hidden /> : index + 1}
+                    </span>
+                    <span
+                      className={cn(
+                        "truncate text-xs font-medium",
+                        active && "text-primary",
+                      )}
+                    >
+                      {step.label}
+                    </span>
+                  </span>
+                  <span className="mt-0.5 block truncate pl-5.5 text-[10px] text-muted-foreground">
+                    {step.owner}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+
         <div className="mt-3">
           <Meter value={progress} tone={complete ? "pass" : "primary"} />
         </div>
       </section>
 
-      <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)_300px]">
-        <aside className="rounded-xl border border-border bg-surface p-3">
-          <p className="px-2 py-1 font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase">
-            Task path
-          </p>
-          <ol className="mt-1 space-y-1">
-            {steps.map((step, index) => {
-              const done = guidedStep > index;
-              const active = guidedStep === index;
-              const available = index <= guidedStep;
-              return (
-                <li key={step.id}>
-                  <button
-                    disabled={!available}
-                    onClick={() => setGuidedStep(index)}
-                    className={cn(
-                      "grid w-full grid-cols-[auto_minmax(0,1fr)] items-start gap-2.5 rounded-lg px-2 py-2.5 text-left transition-colors",
-                      active && "bg-primary-soft text-primary",
-                      done && "hover:bg-secondary",
-                      !available && "cursor-not-allowed opacity-45",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "mt-0.5 grid size-6 place-items-center rounded-full border text-[10px] font-semibold",
-                        done
-                          ? "border-pass/25 bg-pass-soft text-pass"
-                          : active
-                            ? "border-primary/25 bg-primary text-primary-foreground"
-                            : "border-border bg-surface-2 text-muted-foreground",
-                      )}
-                    >
-                      {done ? <Check className="size-3.5" aria-hidden /> : index + 1}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block truncate text-sm font-medium">{step.label}</span>
-                      <span className="block truncate text-[11px] text-muted-foreground">
-                        {step.owner}
-                      </span>
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
-        </aside>
-
-        <main className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <div className="grid items-start gap-4 md:grid-cols-[minmax(0,1fr)_290px]">
+        <main className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6 md:min-h-[520px]">
           {complete ? (
             <CompletionStep onRestart={resetGuided} decision={guidedKnowledgeDecision} />
           ) : (
@@ -241,14 +253,14 @@ function GuidedTaskPage() {
           )}
         </main>
 
-        <aside className="space-y-4">
+        <aside className="space-y-4 md:sticky md:top-4">
           <section className="rounded-xl border border-border bg-surface p-4">
             <div className="flex items-center gap-2">
               <Sparkles className="size-4 text-auto" aria-hidden />
-              <h2 className="text-sm font-semibold">Agent activity</h2>
+              <h2 className="font-display text-sm font-semibold">Agent activity</h2>
             </div>
             <ol className="mt-3 space-y-3">
-              {(complete ? activityByStep[7] : activityByStep[guidedStep]).map((item, index) => (
+              {activity.map((item, index) => (
                 <li key={item} className="grid grid-cols-[auto_minmax(0,1fr)] gap-2 text-xs">
                   <span className="mt-1 size-1.5 rounded-full bg-auto" aria-hidden />
                   <span className="text-muted-foreground">
@@ -275,9 +287,29 @@ function GuidedTaskPage() {
           </section>
         </aside>
       </div>
+
+      <section className="mt-4 rounded-xl border border-border bg-surface">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-border px-4 py-3">
+          <div className="min-w-0">
+            <h2 className="font-display text-sm font-semibold">Live segment board</h2>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              All 8 segments of REQ-2418. Status updates as you move through the task — this is the
+              working view a Language Owner sees.
+            </p>
+          </div>
+          <Chip tone={complete ? "pass" : "auto"}>{complete ? "Released" : "Live"}</Chip>
+        </div>
+        <SegmentBoard
+          step={complete ? steps.length : guidedStep}
+          jaResolved={guidedJaResolved}
+          deResolved={guidedDeResolved}
+          focusId={focusId}
+        />
+      </section>
     </div>
   );
 }
+
 
 function GuidedStep({
   step,
