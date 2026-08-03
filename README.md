@@ -43,30 +43,24 @@ Low-risk content moves forward when all configured checks pass. A failed check b
 
 There are no external vendor roles in this product model. All work stays inside the customer organization.
 
-## What the demo proves
+## What the deployed demo shows
 
-The primary `Guided task` completes one seeded request from source intake to release:
+The deployed prototype opens on a seeded workspace for `REQ-2418 · Smart Ledger launch`. The workspace connects the request, workflow, multilingual content, operations, language assets, knowledge decisions, settings, and analytics:
 
-- resolve an ambiguous Chinese sentence before generation;
-- approve and lock the English master;
-- generate Japanese, German, and French in parallel;
-- resolve Japanese formality and German character-limit exceptions;
-- observe a capacity-based reassignment of an unstarted task;
-- pass the release gate and create a simulated multilingual package;
-- approve, reject, trial, or scope a terminology candidate;
-- inspect the final execution summary and audit evidence.
+- inspect the request, workflow stages, and checks attached to each transition;
+- compare the approved Chinese source, locked English master, and Japanese, German, and French output;
+- review seeded source-ambiguity, Japanese-formality, and German character-limit exceptions;
+- inspect workload, a capacity-based reassignment, and the reason and undo path behind the automated move;
+- review language assets and decide whether repeated edits belong in shared terminology or remain a campaign exception;
+- change the optional approval policy and inspect illustrative operational and quality analytics.
 
-The broader workspace also supports these stateful paths:
-
-- open requests and inspect stage-level checks;
-- change the optional approval policy and see the workflow update;
-- inspect language assets, operational load, audit history, and illustrative analytics.
+All interactions use deterministic local mock data. The workspace resets when the page reloads and does not create a production release.
 
 ## Evidence boundary
 
 | Status                       | Included                                                                                                                                                 |
 | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Implemented in the prototype | Guided source-to-release task, local state changes, exception handling, operations, language assets, knowledge decisions, settings, and seeded analytics |
+| Implemented in the prototype | Seeded request and workflow views, multilingual content, local state changes, exception handling, workload and reassignment views, language assets, knowledge decisions, settings, and seeded analytics |
 | Product design defined       | Risk routing, scope-aware learning, reversible automation, workload model, and governance rules                                                          |
 | Future work                  | Production connectors, persistent backend, SSO/RBAC, multi-tenant isolation, model evaluation, and release integrations                                  |
 | Measured outcomes            | None claimed; all figures in the demo are illustrative and derived from seeded data                                                                      |
@@ -109,7 +103,3 @@ Validation:
 npm run build
 npm run lint
 ```
-
-## Prototype status
-
-This repository contains an independent product prototype. It does not represent a production deployment, customer usage, completed integrations, or measured business impact.
