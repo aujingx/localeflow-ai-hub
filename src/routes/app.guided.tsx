@@ -174,7 +174,7 @@ function GuidedTaskPage() {
         </div>
 
         {/* Horizontal task path */}
-        <ol className="mt-4 grid grid-cols-2 gap-1.5 sm:grid-cols-4 lg:grid-cols-8">
+        <ol className="mt-4 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
           {steps.map((step, index) => {
             const done = guidedStep > index;
             const active = guidedStep === index;
@@ -231,7 +231,7 @@ function GuidedTaskPage() {
       </section>
 
       <div className="grid items-start gap-4 md:grid-cols-[minmax(0,1fr)_290px]">
-        <main className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
+        <main className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6 md:min-h-[520px]">
           {complete ? (
             <CompletionStep onRestart={resetGuided} decision={guidedKnowledgeDecision} />
           ) : (

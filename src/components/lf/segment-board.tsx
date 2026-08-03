@@ -12,6 +12,8 @@ export type BoardSegment = {
   limit?: string;
   /** step index at which the ZH source itself is settled */
   sourceIssue?: boolean;
+  /** original ambiguous Chinese, shown before source QA is resolved */
+  zhBefore?: string;
   /** locale that fails QA at step 4, if any */
   failsAt?: "ja" | "de";
   en: string;
@@ -66,6 +68,7 @@ export const BOARD_SEGMENTS: BoardSegment[] = [
     zh: "同步完成后，系统将自动完成该账本记录。",
     context: "Status message · after sync",
     sourceIssue: true,
+    zhBefore: "系统将在同步完成后自动关闭该账本记录。",
     failsAt: "ja",
     en: "Once syncing is complete, the system will automatically finalize the ledger record.",
     ja: "同期が完了すると、システムが台帳記録を自動的に確定します。",
@@ -164,6 +167,7 @@ export function SegmentBoard({
         <tbody>
           {BOARD_SEGMENTS.map((seg) => {
             const focused = focusId === seg.id;
+            const zh = step < 2 && seg.zhBefore ? seg.zhBefore : seg.zh;
             return (
               <tr key={seg.id} className={cn(focused && "bg-primary-soft/35")}>
                 <td
@@ -176,8 +180,8 @@ export function SegmentBoard({
                     {seg.id}
                     {seg.limit ? ` · ${seg.limit}` : ""}
                   </p>
-                  <p className="mt-0.5 truncate text-sm font-medium" title={seg.zh}>
-                    {seg.zh}
+                  <p className="mt-0.5 truncate text-sm font-medium" title={zh}>
+                    {zh}
                   </p>
                   <p className="truncate text-[11px] text-muted-foreground">{seg.context}</p>
                 </td>
